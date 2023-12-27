@@ -1,0 +1,21 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    <h2>All Listings</h2> 
+    <div class="row">
+        <% for (let listing of allListings) { %>
+            <a href="/listings/<%= listing._id %>" class="col-xl-3 col-lg-4 col-md-6 col-sm-12 listing-link">
+                <div class="card" style="width: 100%;">
+                    <% if (listing.image.url) { %>
+                        <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %> Image" style="height: 20rem; object-fit: cover;">
+                    <% } else { %>
+                        <img src="<%= listing.image %>" class="card-img-top" alt="<%= listing.title %> Image" style="height: 20rem; object-fit: cover;">
+                    <% } %>
+                    <div class="card-body">
+                        <p class="card-title"><b><%= listing.title %></b></p>
+                        <p class="card-price">&#36;<%= listing.price %>/night</p>
+                    </div>
+                </div>
+            </a>
+        <% } %>
+    </div>
+</body>

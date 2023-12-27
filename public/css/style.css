@@ -1,0 +1,116 @@
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+.navbar {
+    height: 5rem;
+}
+
+.fa-compass {
+    color: #fe424d;
+    font-size: 2rem;
+}
+
+.nav-link {
+    color: #222222 !important;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+}
+
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-icon {
+    margin-right: 1rem;
+    font-size: 1.5rem; /* Adjust the margin for space between social icons */
+}
+
+.f-info-socials {
+    display: flex;
+}
+
+.f-info {
+    text-align: center;
+    height: 8rem;
+    background-color: #ebebeb;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: space-evenly;
+}
+
+.card {
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body {
+    padding: 0 !important;
+    text-align: left; /* Align text to the left */
+}
+
+.card-title {
+    font-weight: bold; /* Make the title bold */
+    margin-bottom: 0.5rem; /* Add a small margin for better spacing */
+}
+
+.card-text {
+    font-weight: 400 !important;
+    margin-bottom: 0.5rem; /* Add a small margin for better spacing between details */
+}
+
+.listing-link {
+    text-decoration: none !important;
+}
+
+.add-btn {
+    background-color: #fe424d !important;
+    border: none !important;
+}
+
+.show-img {
+    height: 30vh !important;
+}
+
+/* Add styles for button alignment and edit/delete button colors */
+.btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.edit-btn {
+    background-color: red !important;
+    color: black !important; /* Set text color to black */
+    padding: 0.5rem 1rem !important;
+    text-decoration: none !important;
+    margin-right: 1rem !important;
+}
+
+.delete-btn {
+    background-color: black !important;
+    color: white !important; /* Set text color to white */
+    padding: 0.5rem 1rem !important;
+    text-decoration: none !important;
+}

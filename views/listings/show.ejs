@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<% layout("/layouts/boilerplate") %>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Details</title>
+    <link rel="stylesheet" href="/path/to/style.css"> <!-- Add the correct path to your style.css file -->
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="card col-6">
+                <div class="card-body">
+                    <h3>Listing Details</h3>
+                    <% if (listing.image && listing.image.url) { %>
+                        <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="<%= listing.title %> Image">
+                    <% } else if (listing.image) { %>
+                        <img src="<%= listing.image %>" class="card-img-top show-img" alt="<%= listing.title %> Image">
+                    <% } else { %>
+                        <p>No Image Available</p>
+                    <% } %>
+                    <h5 class="card-title"><%= listing.title %></h5>
+                    <% if (listing.description) { %>
+                        <p class="card-text"><%= listing.description %></p>
+                    <% } %>
+                    <p class="card-text">Location: <%= listing.location %>, <%= listing.country %></p>
+                    <p class="card-text">Price: $<%= listing.price %></p>
+                    <!-- Add more details as needed -->
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn">Edit</a>
+                </div>
+                <div class="col">
+                    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                        <button class="btn delete-btn">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr /> <!-- Add a horizontal line for better visual separation -->
+    <!-- Add your HTML structure or other content as needed -->
+    <!-- Add your JavaScript scripts or links here -->
+</body>
+
+</html>

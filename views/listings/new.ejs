@@ -1,0 +1,68 @@
+<% layout("layouts/boilerplate") %>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wanderlust</title>
+    <!-- Link to Bootstrap CSS if not included already -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Include the navbar -->
+
+    <div class="container">
+        <h1 class="mt-4">Create new listing</h1>
+        <form method="POST" action="/listings/" novalidate class="mt-4 needs-validation">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required>
+                <div class="valid-feedback">Title looks good!</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" placeholder="Enter description" class="form-control" required></textarea>
+                <div class="invalid-feedback">Please enter a valid description</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Image URL</label>
+                <input name="listing[image]" placeholder="Enter image URL/LINK" type="text" class="form-control" required>
+                <div class="invalid-feedback">Please enter a valid image URL</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input name="listing[price]" placeholder="Enter price" type="number" class="form-control" >
+                <div class="invalid-feedback">Please enter a valid price</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="country" class="form-label">Country</label>
+                <input name="listing[country]" placeholder="Enter country name" type="text" class="form-control" required>
+                <div class="invalid-feedback">Please enter a valid country name</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" required>
+                <div class="invalid-feedback">Please enter a valid location</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary add-btn">Add</button>
+        </form>
+    </div>
+
+    <!-- Include the footer -->
+</body>
+
+</html>
