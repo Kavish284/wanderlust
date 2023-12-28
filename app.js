@@ -8,7 +8,9 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapasync");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema} = require("./schema.js");
+const {listingSchema,reviewSchema} = require("./schema.js");
+const Review = require("./models/review.js");
+
 main().then(() => {
     console.log("Connected to DB");
 }).catch((err) => {
@@ -40,6 +42,18 @@ const validateListing = (req,res,next) => {
         next();
     }
 }
+
+
+const validateReview = (req,res,next) => {
+    let {error} = reviewSchema.validate(req.body);
+    if(error){
+        let errmsg = error.details.map((el) => el.message).join(",");
+
+        throw new ExpressError(400, errmsg)
+    }else{
+        next();
+    }
+}
 // Index Route
 app.get("/listings", async (req, res) => {
     try {
@@ -57,10 +71,12 @@ app.get("/listings/new", (req, res) => {
 });
 
 // Show route
+// Show route
 app.get("/listings/:id", async (req, res) => {
     try {
         let { id } = req.params;
-        const singleListing = await Listing.findById(id);
+        const singleListing = await Listing.findById(id).populate("reviews");
+        console.log("Single Listing with Reviews:", singleListing);
         res.render("listings/show.ejs", { listing: singleListing });
     } catch (err) {
         console.error("Error fetching listing details:", err);
@@ -68,14 +84,44 @@ app.get("/listings/:id", async (req, res) => {
     }
 });
 
+
 // Create Route
 
-app.post("/listings", validateListing, wrapAsync(async (req, res, next) => {
+app.post("/listings/", validateListing, wrapAsync(async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
 }));
 
+
+app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req, res) => {
+    try {
+        let listing = await Listing.findById(req.params.id);
+        let newReview = new Review(req.body.review);
+        listing.reviews.push(newReview);
+        await newReview.save();
+        await listing.save();
+        console.log("new review saved");
+        
+        res.redirect("/listings");  // Corrected redirect route
+    } catch (err) {
+        console.error("Error adding review:", err);
+        res.status(500).send("Internal Server Error");
+    }
+}));
+
+//delete review route
+app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+
+    // Update the listing to remove the reference to the review
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+
+    // Delete the review
+    await Review.findByIdAndDelete(reviewId);
+
+    res.redirect(`/listings/${id}`);
+}));
 
 // Edit Route
 app.get("/listings/:id/edit", async (req, res) => {
