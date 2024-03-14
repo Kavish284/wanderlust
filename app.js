@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV!== "production"){
+    require('dotenv').config();
+}
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -8,8 +11,26 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapasync");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema,reviewSchema} = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
+const listings = require("./routes/listing.js");
+const reviews = require("./routes/review.js");
+const userrouter = require("./routes/user.js")
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js"); // Corrected the user model import
+const sessionOptions = {
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+    },
+};
 
 main().then(() => {
     console.log("Connected to DB");
@@ -32,136 +53,47 @@ app.get("/", (req, res) => {
     res.send("Hi, I am root");
 });
 
-const validateListing = (req,res,next) => {
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        let errmsg = error.details.map((el) => el.message).join(",");
+app.use(session(sessionOptions));
+app.use(flash());
 
-        throw new ExpressError(400, errmsg)
-    }else{
-        next();
-    }
-}
-
-
-const validateReview = (req,res,next) => {
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errmsg = error.details.map((el) => el.message).join(",");
-
-        throw new ExpressError(400, errmsg)
-    }else{
-        next();
-    }
-}
-// Index Route
-app.get("/listings", async (req, res) => {
-    try {
-        const allListings = await Listing.find({});
-        res.render("listings/index.ejs", { allListings });
-    } catch (err) {
-        console.error("Error fetching listings:", err);
-        res.status(500).send("Internal Server Error");
-    }
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate())); // Updated to use User model
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.curruser = req.user;
+    console.log(res.locals.success);
+    next();
 });
 
-// New route
-app.get("/listings/new", (req, res) => {
-    res.render("listings/new.ejs");
-});
-
-// Show route
-// Show route
-app.get("/listings/:id", async (req, res) => {
-    try {
-        let { id } = req.params;
-        const singleListing = await Listing.findById(id).populate("reviews");
-        console.log("Single Listing with Reviews:", singleListing);
-        res.render("listings/show.ejs", { listing: singleListing });
-    } catch (err) {
-        console.error("Error fetching listing details:", err);
-        res.status(404).send("Listing Not Found");
-    }
-});
-
-
-// Create Route
-
-app.post("/listings/", validateListing, wrapAsync(async (req, res, next) => {
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/listings");
-}));
-
-
-app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req, res) => {
-    try {
-        let listing = await Listing.findById(req.params.id);
-        let newReview = new Review(req.body.review);
-        listing.reviews.push(newReview);
-        await newReview.save();
-        await listing.save();
-        console.log("new review saved");
-        
-        res.redirect("/listings");  // Corrected redirect route
-    } catch (err) {
-        console.error("Error adding review:", err);
-        res.status(500).send("Internal Server Error");
-    }
-}));
-
-//delete review route
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
-
-    // Update the listing to remove the reference to the review
-    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-
-    // Delete the review
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/listings/${id}`);
-}));
-
-// Edit Route
-app.get("/listings/:id/edit", async (req, res) => {
-    try {
-        let { id } = req.params;
-        const singleListing = await Listing.findById(id);
-        res.render("listings/edit.ejs", { singleListing });
-    } catch (err) {
-        console.error("Error fetching listing for editing:", err);
-        res.status(404).send("Listing Not Found");
-    }
-});
-
-// Update Route
-app.put('/listings/:id', validateListing, wrapAsync(async (req, res) => {
-   
-      const { id } = req.params;
-      const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, { new: true });
-      res.redirect(`/listings/${updatedListing._id}`);
+app.get("/demouser", async (req, res) => {
     
-  }));
-// Delete Route
-app.delete("/listings/:id", async (req, res) => {
-    try {
-        let { id } = req.params;
-        await Listing.findByIdAndDelete(id);
-        res.redirect("/listings");
-    } catch (err) {
-        console.error("Error deleting listing:", err);
-        res.status(500).send("Internal Server Error");
-    }
+    
+        let fakeuser = new User({
+            email: "student1@gmail.com",
+            username: "delta-student1"
+        });
+        let registeredUser = await User.register(fakeuser, "helloworld");
+        res.send(registeredUser);
+    
 });
-app.all("*",(req,res,next) => {
-    next(new ExpressError(404,"page not found"));
 
+app.use("/listings", listings);
+app.use("/listings/:id/reviews", reviews);
+
+app.use("/",userrouter);
+app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "page not found"));
 });
-app.use((err,req,res,next) => {
-    let {statusCode, message} = err;
+
+app.use((err, req, res, next) => {
+    let { statusCode, message } = err;
     res.status(statusCode).send(message);
 });
+
 const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);

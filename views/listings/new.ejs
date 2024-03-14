@@ -21,7 +21,7 @@
 
     <div class="container">
         <h1 class="mt-4">Create new listing</h1>
-        <form method="POST" action="/listings/" novalidate class="mt-4 needs-validation">
+        <form method="POST" action="/listings/" novalidate class="mt-4 needs-validation" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required>
@@ -35,9 +35,10 @@
             </div>
 
             <div class="mb-3">
-                <label for="image" class="form-label">Image URL</label>
-                <input name="listing[image]" placeholder="Enter image URL/LINK" type="text" class="form-control" required>
-                <div class="invalid-feedback">Please enter a valid image URL</div>
+                <label for="image" class="form-label">Uplaod Listing Image</label>
+                <input name="listing[image]" type="file" class="form-control" required>
+                required
+                <div class="invalid-feedback">upload proper format image</div>
             </div>
 
             <div class="mb-3">

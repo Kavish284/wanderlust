@@ -11,42 +11,42 @@
         <h3>
             Edit your listing
         </h3>
-        <form method="POST" action="/listings/<%= singleListing._id %>?_method=PUT" novalidate class="needs-validation">
+        <form method="POST" action="/listings/<%= singleListing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input name="listing[title]" value="<%= singleListing.title %>" type="text" class="form-control" required>
+                <input name="listing[title]" value="<%= singleListing.title %>" type="text" class="form-control">
                 <div class="invalid-feedback">Please enter a title</div>
             </div>
 
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea name="listing[description]" type="text" class="form-control" required><%= singleListing.description %></textarea>
+                <textarea name="listing[description]" type="text" class="form-control" ><%= singleListing.description %></textarea>
                 <div class="invalid-feedback">Please enter a description</div>
             </div>
 
             <div class="mb-3">
-                <label for="image" class="form-label">Image URL</label>
-                <input name="listing[image]" value="<%= singleListing.image.filename ? singleListing.image.url : singleListing.image %>" type="text" class="form-control" required>
+                <label for="image" class="form-label">Upload New Image </label>
+                <input name="listing[image]"  type="file" class="form-control" >
                 <div class="invalid-feedback">Please enter a valid image URL</div>
             </div>
             
 
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
-                <input name="listing[price]" value="<%= singleListing.price %>" type="number" class="form-control" required>
+                <input name="listing[price]" value="<%= singleListing.price %>" type="number" class="form-control" >
                 <div class="invalid-feedback">Please enter a valid price</div>
             </div>
 
             <div class="mb-3">
                 <label for="country" class="form-label">Country</label>
-                <input name="listing[country]" value="<%= singleListing.country %>" type="text" class="form-control" required>
+                <input name="listing[country]" value="<%= singleListing.country %>" type="text" class="form-control" >
                 <div class="invalid-feedback">Please enter a valid country name</div>
             </div>
 
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
-                <input name="listing[location]" value="<%= singleListing.location %>" type="text" class="form-control" required>
+                <input name="listing[location]" value="<%= singleListing.location %>" type="text" class="form-control" >
                 <div class="invalid-feedback">Please enter a valid location</div>
             </div>
 
