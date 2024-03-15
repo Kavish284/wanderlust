@@ -90,9 +90,17 @@ app.all("*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    let { statusCode, message } = err;
+    let statusCode = err.statusCode || 500;
+    let message = err.message || 'Internal Server Error';
+
+    // Log the error details for debugging
+    console.error('Error:', err);
+
+    // Send the error response
     res.status(statusCode).send(message);
 });
+
+
 
 const PORT = 8080;
 app.listen(PORT, () => {

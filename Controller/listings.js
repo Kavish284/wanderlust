@@ -36,11 +36,13 @@ module.exports.showListing = async (req, res) => {
 module.exports.createListing = async (req, res, next) => {
     let url = req.file.path;
     let filename  = req.file.filename;
-    console.log(url, "..", filename);
+    let category = req.body.listing.category;
+
+    console.log(url, "..", filename, "..", category);
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
     newListing.image = {url, filename};
-    
+    newListing.category = category;
     await newListing.save();
     req.flash("success", "New Listing Created");
     res.redirect("/listings");
@@ -86,5 +88,21 @@ module.exports.deleteListing = async (req, res) => {
         console.error("Error deleting listing:", err);
         req.flash("error", "Failed to delete listing");
         res.redirect("/listings");
+    }
+};
+
+module.exports.filterByCategory = async (req, res, next) => {
+    const { category } = req.params;
+    try {
+        const filteredListings = await Listing.find({ category });
+        if (filteredListings.length === 0) {
+            req.flash('error', 'No Air BNB available in the selected category');
+            return res.redirect('/listings');
+        }
+        res.render('listings/index', { allListings: filteredListings });
+    } catch (error) {
+        console.error('Error fetching filtered listings:', error);
+        req.flash('error', 'Failed to fetch filtered listings');
+        res.redirect('/listings');
     }
 };

@@ -33,6 +33,9 @@ router.get("/:id/edit", isLoggedIn, isowner, wrapAsync(ListingController.renderE
 router.put('/:id', isLoggedIn, isowner, upload.single('listing[image]'),validateListing, wrapAsync(ListingController.UpdateLisitng));
 
 // Delete Route
-router.delete("/:id", isLoggedIn, isowner, wrapAsync(ListingController.DeleteListing));
+router.delete("/:id", isLoggedIn, isowner, wrapAsync(ListingController.deleteListing));
+
+
+router.get('/category/:category', ListingController.filterByCategory);
 
 module.exports = router;

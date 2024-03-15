@@ -1,61 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>wanderlust</title>
 </head>
 <% layout("/layouts/boilerplate") %>
-<body>
-    <div class="container">
-        <h3>
-            Edit your listing
-        </h3>
-        <form method="POST" action="/listings/<%= singleListing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
 
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input name="listing[title]" value="<%= singleListing.title %>" type="text" class="form-control">
-                <div class="invalid-feedback">Please enter a title</div>
-            </div>
+    <body>
+        <div class="container">
+            <h3>
+                Edit your listing
+            </h3>
+            <form method="POST" action="/listings/<%= singleListing._id %>?_method=PUT" novalidate
+                class="needs-validation" enctype="multipart/form-data">
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea name="listing[description]" type="text" class="form-control" ><%= singleListing.description %></textarea>
-                <div class="invalid-feedback">Please enter a description</div>
-            </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" value="<%= singleListing.title %>" type="text" class="form-control">
+                    <div class="invalid-feedback">Please enter a title</div>
+                </div>
 
-            <div class="mb-3">
-                <label for="image" class="form-label">Upload New Image </label>
-                <input name="listing[image]"  type="file" class="form-control" >
-                <div class="invalid-feedback">Please enter a valid image URL</div>
-            </div>
-            
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="listing[description]" type="text"
+                        class="form-control"><%= singleListing.description %></textarea>
+                    <div class="invalid-feedback">Please enter a description</div>
+                </div>
 
-            <div class="mb-3">
-                <label for="price" class="form-label">Price</label>
-                <input name="listing[price]" value="<%= singleListing.price %>" type="number" class="form-control" >
-                <div class="invalid-feedback">Please enter a valid price</div>
-            </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload New Image </label>
+                    <input name="listing[image]" type="file" class="form-control">
+                    <div class="invalid-feedback">Please enter a valid image URL</div>
+                </div>
 
-            <div class="mb-3">
-                <label for="country" class="form-label">Country</label>
-                <input name="listing[country]" value="<%= singleListing.country %>" type="text" class="form-control" >
-                <div class="invalid-feedback">Please enter a valid country name</div>
-            </div>
 
-            <div class="mb-3">
-                <label for="location" class="form-label">Location</label>
-                <input name="listing[location]" value="<%= singleListing.location %>" type="text" class="form-control" >
-                <div class="invalid-feedback">Please enter a valid location</div>
-            </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input name="listing[price]" value="<%= singleListing.price %>" type="number" class="form-control">
+                    <div class="invalid-feedback">Please enter a valid price</div>
+                </div>
 
-            <button type="submit" class="btn btn-primary edit-btn">
-                Edit
-            </button>
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input name="listing[country]" value="<%= singleListing.country %>" type="text"
+                        class="form-control">
+                    <div class="invalid-feedback">Please enter a valid country name</div>
 
-        </form>
-    </div>
-    <script src = "/js/script.js"></script>
-</body>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" name="listing[category]">
+                        <option value="Hotels" <%=singleListing.category==='Hotels' ? 'selected' : '' %>>Hotels</option>
+                        <option value="Beach" <%=singleListing.category==='Beach' ? 'selected' : '' %>>Beach</option>
+                        <option value="Mountain" <%=singleListing.category==='Mountain' ? 'selected' : '' %>>Mountain</option>
+                        <option value="City" <%=singleListing.category==='City' ? 'selected' : '' %>>City</option>
+                        <option value="Cabin" <%=singleListing.category==='Cabin' ? 'selected' : '' %>>Cabin</option>
+                        <option value="Villa" <%=singleListing.category==='Villa' ? 'selected' : '' %>>Villa</option>
+                        <option value="Loft" <%=singleListing==='Loft' ? 'selected' : '' %>>Loft</option>
+                        <option value="Cottage" <%=singleListing.category==='Cottage' ? 'selected' : '' %>>Cottage</option>
+                        <option value="Chalet" <%=singleListing.category==='Chalet' ? 'selected' : '' %>>Chalet</option>
+                        <!-- Add other category options -->
+                    </select>
+                </div>
+                <!-- Inside the listing editing form -->
+                
+
+
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input name="listing[location]" value="<%= singleListing.location %>" type="text"
+                        class="form-control">
+                    <div class="invalid-feedback">Please enter a valid location</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary edit-btn">
+                    Edit
+                </button>
+
+            </form>
+        </div>
+        <script src="/js/script.js"></script>
+    </body>
+
 </html>
