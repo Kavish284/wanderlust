@@ -13,6 +13,7 @@ const wrapAsync = require("./utils/wrapasync");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
+const reservationRoutes = require('./routes/reservationRoutes.js');
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
 const userrouter = require("./routes/user.js")
@@ -83,6 +84,8 @@ app.get("/demouser", async (req, res) => {
 
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
+app.use('/listings', reservationRoutes);
+
 
 app.use("/",userrouter);
 app.all("*", (req, res, next) => {

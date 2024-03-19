@@ -29,6 +29,12 @@ const listingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
+    reservations: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Reservation"
+        }
+    ]
 });
 
 const listing = mongoose.model("listing", listingSchema);

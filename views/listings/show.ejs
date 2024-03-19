@@ -1,191 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <% layout("/layouts/boilerplate") %>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Listing Details</title>
-        <!-- Add Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/path/to/style.css"> <!-- Add the correct path to your style.css file -->
-        <style>
-            .review-box {
-                margin-bottom: 20px;
-                border: 1px solid #ccc;
-                padding: 10px;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-jlU/CMzCGqeH3lOSSlx6vJO5mbR8KD5z/zxRvfJtVdsD0+XxJknD95JHD4z8WW83GXVyxAbtMQgdRyGZhLSsyw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-            .review-rating {
-                display: flex;
-                align-items: center;
-            }
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/path/to/style.css"> <!-- Add the correct path to your style.css file -->
+    <style>
+        .reservation-form-container {
+            margin-top: 50px;
+        }
 
-            .rating-stars {
-                color: #FFD700;
-                margin-right: 5px;
-            }
-        </style>
-    </head>
+        .reservation-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    <body>
-        <div class="row">
-            <div class="col-8 offset-2">
-                <div class="card col-6">
-                    <div class="card-body">
-                        <h3>
-                            <%= listing.title %>
-                        </h3>
-                        <% if (listing.image && listing.image.url) { %>
-                            <img src="<%= listing.image.url %>" class="card-img-top show-img"
-                                alt="<%= listing.title %> Image">
-                            <% } else if (listing.image) { %>
-                                <img src="<%= listing.image %>" class="card-img-top show-img"
-                                    alt="<%= listing.title %> Image">
-                                <% } else { %>
-                                    <p>No Image Available</p>
-                                    <% } %>
-                                        <p class="card-text">
-                                            Owned by
-                                            <i>
-                                                <%= listing.owner.username %>
-                                            </i>
-                                        </p>
-                                        <% if (listing.description) { %>
-                                            <p class="card-text">
-                                                <%= listing.description %>
-                                            </p>
-                                            <% } %>
-                                                <p class="card-text">Location: <%= listing.location %>, <%=
-                                                            listing.country %>
-                                                </p>
-                                                <p class="card-text">Price: $<%= listing.price %>
-                                                </p>
-                                                <!-- Add more details as needed -->
-                    </div>
-                </div>
-                <% if (curruser && listing.owner._id.equals(curruser._id)) { %>
-                    <div class="row mt-3">
-                        <div class="col">
-                            <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary">Edit</a>
-                        </div>
-                        <div class="col">
-                            <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </div>
+        .reservation-form h4 {
+            margin-bottom: 20px;
+        }
+
+        .reservation-form label {
+            font-weight: bold;
+        }
+
+        .reservation-form input[type="date"],
+        .reservation-form input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .reservation-form button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .review-box {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+        }
+
+        .rating-stars {
+            color: #FFD700;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3><%= listing.title %></h3>
+                    <% if (listing.image && listing.image.url) { %>
+                        <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="<%= listing.title %> Image">
+                    <% } else if (listing.image) { %>
+                        <img src="<%= listing.image %>" class="card-img-top show-img" alt="<%= listing.title %> Image">
+                    <% } else { %>
+                        <p>No Image Available</p>
                     <% } %>
-
-                        <!-- Review Form Section -->
-                        <% if (curruser) { %>
-                            <div class="row mt-3">
-                                <div class="col-8 offset-3 mb-3">
-                                    <hr />
-                                    <h4>Add a Review</h4>
-                                    <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate
-                                        class="needs-validation">
-                                        <div class="mb-3 mt-3">
-                                            <fieldset class="starability-slot">
-
-                                                <legend> Rating:</legend>
-                                                <input type="radio" id="no-rate" class="input-no-rate"
-                                                    name="review[rating]" value="0" checked aria-label="No rating." />
-                                                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                                                <label for="first-rate1" title="Terrible">1 star</label>
-                                                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                                                <label for="first-rate2" title="Not good">2 stars</label>
-                                                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                                                <label for="first-rate3" title="Average">3 stars</label>
-                                                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                                                <label for="first-rate4" title="Very good">4 stars</label>
-                                                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                                                <label for="first-rate5" title="Amazing">5 stars</label>
-                                            </fieldset>
-                                        </div>
-
-                                        <div class="mb-3 mt-3">
-                                            <label for="comment" class="form-label">Comment</label>
-                                            <textarea name="review[comment]" id="comment" cols="30" rows="5"
-                                                class="form-control" required></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-success">Submit Review</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <% } %>
-                                <!-- End Review Form Section -->
-
-                                <!-- All Reviews Section -->
-                                <div class="row mt-3">
-                                    <div class="col">
-                                        <h4>All Reviews</h4>
-                                        <% if (listing.reviews && listing.reviews.length> 0) { %>
-                                            <% for (let i=0; i < listing.reviews.length; i +=2) { %>
-                                                <div class="row mb-3">
-                                                    <% for (let j=i; j < i + 2 && j < listing.reviews.length; j++) { %>
-                                                        <div class="col-md-6">
-                                                            <div class="review-box">
-                                                                <div class="review-header">
-                                                                    <h6 class="card-title">
-                                                                        <%= listing.reviews[j].author.username %>
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="review-rating">
-                                                                    <h6 class="card-title">
-                                                                        Rating: <%= listing.reviews[j].rating %>
-                                                                            <span class="rating-stars">
-                                                                                <%= '*'
-                                                                                    .repeat(listing.reviews[j].rating)
-                                                                                    %>
-                                                                            </span>
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="review-body">
-                                                                    <p class="card-text">
-                                                                        <%= listing.reviews[j].comment %>
-                                                                    </p>
-                                                                </div>
-                                                                <div class="review-actions">
-                                                                    <form class="mb-3" method="POST"
-                                                                        action="/listings/<%= listing._id %>/reviews/<%= listing.reviews[j]._id %>?_method=DELETE">
-                                                                        <button
-                                                                            class="btn btn-sm btn-dark">Delete</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <% } %>
-                                                </div>
-                                                <% } %>
-                                                    <% } else { %>
-                                                        <p>No reviews available</p>
-                                                        <% } %>
-                                    </div>
-                                </div>
-                                <!-- End All Reviews Section -->
-
+                    <p class="card-text">Owned by <i><%= listing.owner.username %></i></p>
+                    <% if (listing.description) { %>
+                        <p class="card-text"><%= listing.description %></p>
+                    <% } %>
+                    <p class="card-text">Location: <%= listing.location %>, <%= listing.country %></p>
+                    <p class="card-text">Price: $<%= listing.price %></p>
+                    <% if (curruser && curruser._id.toString() === listing.owner._id.toString()) { %>
+                        <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary">Edit</a>
+                        <a href="/listings/<%= listing._id %>/delete" class="btn btn-danger">Delete</a>
+                    <% } %>
+                </div>
             </div>
         </div>
-        <hr /> <!-- Add a horizontal line for better visual separation -->
-        <!-- Add your HTML structure or other content as needed -->
-        <!-- Add your JavaScript scripts or links here -->
+        <div class="col-md-6">
+            <div class="reservation-form-container">
+                <div class="reservation-form">
+                    <h4>Make a Reservation</h4>
+                    <form action="/listings/<%= listing._id %>/reserve" method="POST" novalidate class="needs-validation">
+                        <div class="form-group">
+                            <label for="checkInDate">Check-in Date</label>
+                            <input type="date" name="reservation[checkInDate]" id="checkInDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkOutDate">Check-out Date</label>
+                            <input type="date" name="reservation[checkOutDate]" id="checkOutDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guests">Number of Guests</label>
+                            <input type="number" name="reservation[guests]" id="guests" class="form-control" required>
+                        </div>
+                        <% if(curruser) { %>
+                            <button type="submit" class="btn btn-success">Reserve Now</button>
+                        <% } else { %>
+                            <p>Please login to make a reservation.</p>
+                        <% } %>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <!-- Add Bootstrap JS and Popper.js (order matters) -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-        <script>
-            // Update the rating value display while sliding the range input
-            const ratingRange = document.getElementById('rating');
-            const ratingValue = document.getElementById('ratingValue');
+    <!-- Add a Review Section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <% if (curruser) { %>
+                <div class="row mt-3">
+                    <div class="col">
+                        <hr />
+                        <h4>Add a Review</h4>
+                        <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate class="needs-validation">
+                            <div class="mb-3 mt-3">
+                                <fieldset class="starability-slot">
+                                    <legend> Rating:</legend>
+                                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                                    <label for="first-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                                    <label for="first-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                                    <label for="first-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                                    <label for="first-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                                    <label for="first-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="comment" class="form-label">Comment</label>
+                                <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
 
-            ratingRange.addEventListener('input', () => {
-                ratingValue.textContent = ratingRange.value;
-            });
-        </script>
+    <!-- All Reviews Section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>All Reviews</h4>
+            <% if (listing.reviews && listing.reviews.length > 0) { %>
+                <% for (let i = 0; i < listing.reviews.length; i++) { %>
+                    <div class="review-box">
+                        <p><strong><%= listing.reviews[i].author.username %></strong></p>
+                        <p><%= listing.reviews[i].comment %></p>
+                        <p class="review-rating">
+                            <% for (let star = 0; star < listing.reviews[i].rating; star++) { %>
+                                <i class="fas fa-star"></i>
+                            <% } %>
+                        </p>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <p>No reviews available</p>
+            <% } %>
+        </div>
+    </div>
 
-    </body>
+    <!-- Bootstrap JS and Popper.js (order matters) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
 
 </html>
