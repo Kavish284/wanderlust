@@ -65,9 +65,6 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
-app.get("/", (req, res) => {
-    res.send("Hi, I am root");
-});
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -104,19 +101,20 @@ app.use('/listings', reservationRoutes);
 
 app.use("/",userrouter);
 app.all("*", (req, res, next) => {
-    next(new ExpressError(404, "page not found"));
+    next(new ExpressError("Page not found", 404));
 });
 
 app.use((err, req, res, next) => {
-    let statusCode = err.statusCode || 500;
-    let message = err.message || 'Internal Server Error';
-
-    // Log the error details for debugging
-    console.error('Error:', err);
-
-    // Send the error response
-    res.status(statusCode).send(message);
+    if (err.statusCode === 404) {
+        return res.sendStatus(404);
+    }
+    
+    // For all other errors, send a generic error response without logging
+    res.status(500).send('Internal Server Error');
 });
+
+
+
 
 
 
