@@ -92,8 +92,9 @@
                     <p class="card-text">Price: $<%= listing.price %></p>
                     <% if (curruser && curruser._id.toString() === listing.owner._id.toString()) { %>
                         <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary">Edit</a>
-                        <a href="/listings/<%= listing._id %>/delete" class="btn btn-danger">Delete</a>
-                    <% } %>
+                        <!-- <a href="/listings/<%= listing._id %>/delete" class="btn btn-danger">Delete</a> -->
+                         <button id="deleteListingButton" data-listing-id="<%= listing._id %>" class="btn btn-danger">Delete</button>
+                        <% } %>
                 </div>
             </div>
         </div>
@@ -188,6 +189,34 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add click event listener to the delete button
+            document.getElementById("deleteListingButton").addEventListener("click", function(event) {
+                event.preventDefault(); // Prevent default form submission
+                
+                const listingId = this.getAttribute("data-listing-id");
+                
+                // Send an AJAX request to delete the listing
+                fetch(`/listings/${listingId}/delete`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if(response?.status===200){
+                        window.location.href = '/listings'
+                    }
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    // Handle errors appropriately
+                });
+            });
+        });
+    </script>
+    
 </body>
 
 </html>

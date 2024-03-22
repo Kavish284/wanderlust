@@ -17,9 +17,10 @@ module.exports.renderNewForm = (req, res) => {
 module.exports.showListing = async (req, res) => {
     try {
         let { id } = req.params;
-        const singleListing = await Listing.findById(id).populate({path:"reviews", populate:{
-            path:"author",
-        },
+        const singleListing = await Listing.findById(id).populate({
+            path: "reviews", populate: {
+                path: "author",
+            },
         }).populate("owner");
         if (!singleListing) {
             req.flash("error", "Listing you requested for does not exist!");
@@ -35,13 +36,13 @@ module.exports.showListing = async (req, res) => {
 
 module.exports.createListing = async (req, res, next) => {
     let url = req.file.path;
-    let filename  = req.file.filename;
+    let filename = req.file.filename;
     let category = req.body.listing.category;
 
     console.log(url, "..", filename, "..", category);
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = {url, filename};
+    newListing.image = { url, filename };
     newListing.category = category;
     await newListing.save();
     req.flash("success", "New Listing Created");
@@ -66,14 +67,14 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.UpdateLisitng = (async (req, res) => {
     const { id } = req.params;
     const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, { new: true });
-    if (typeof req.file != "undefined"){
+    if (typeof req.file != "undefined") {
         let url = req.file.path;
-        let filename  = req.file.filename;
-        updatedListing.image = { url , filename};
+        let filename = req.file.filename;
+        updatedListing.image = { url, filename };
         await updatedListing.save();
 
     }
-    
+
     req.flash("success", "listing updated!");
     res.redirect(`/listings/${updatedListing._id}`);
 });
@@ -81,9 +82,20 @@ module.exports.UpdateLisitng = (async (req, res) => {
 module.exports.deleteListing = async (req, res) => {
     try {
         let { id } = req.params;
-        await Listing.findByIdAndDelete(id);
-        req.flash("success", "Listing Deleted!");
-        res.redirect("/listings");
+        const result = await Listing.findByIdAndDelete(id);
+        if (result) {
+            // req.flash("success", "Listing Deleted!");
+            // res.redirect("/listings");
+            res.json({
+                status:200,
+                message:"Deleted successfully"
+            })
+        }else{
+            res.json({
+                status:500,
+                message:"something went wrong"
+            })
+        }
     } catch (err) {
         console.error("Error deleting listing:", err);
         req.flash("error", "Failed to delete listing");
